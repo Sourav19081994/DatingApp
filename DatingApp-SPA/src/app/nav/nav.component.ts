@@ -28,7 +28,7 @@ model: any = {};
     return !!token;
   }
 
-  logOut(){
+  logOut() {
     localStorage.removeItem('token');
     console.log('logged out');
   }
