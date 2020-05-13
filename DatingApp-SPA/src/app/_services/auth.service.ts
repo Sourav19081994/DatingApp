@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../environments/environment';
 import { User } from '../_models/user';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
   baseUrl = environment.apiUrl + 'auth/';
@@ -28,22 +28,34 @@ export class AuthService {
       map((response: any) => {
         const user = response;
         if (user) {
-          this.decodedToken = this.jwtHelper.decodeToken(user.token);
           localStorage.setItem('token', user.token);
           localStorage.setItem('user', JSON.stringify(user.user));
+          this.decodedToken = this.jwtHelper.decodeToken(user.token);
           this.currentUser = user.user;
-          this.changeMemberPhoto(this.currentUser.photoURL);
+          this.changeMemberPhoto(this.currentUser.photoUrl);
         }
       })
     );
   }
 
-  register(model: any) {
-    return this.http.post(this.baseUrl + 'register', model);
+  register(user: User) {
+    return this.http.post(this.baseUrl + 'register', user);
   }
 
   loggedIn() {
     const token = localStorage.getItem('token');
     return !this.jwtHelper.isTokenExpired(token);
+  }
+
+  roleMatch(allowedRoles): boolean {
+    let isMatch = false;
+    const userRoles = this.decodedToken.role as Array<string>;
+    allowedRoles.forEach(element => {
+      if (userRoles.includes(element)) {
+        isMatch = true;
+        return;
+      }
+    });
+    return isMatch;
   }
 }

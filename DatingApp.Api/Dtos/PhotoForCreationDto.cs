@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Http;
 
-namespace DatingApp.Api.Dtos
+namespace DatingApp.API.Dtos
 {
     public class PhotoForCreationDto
     {
